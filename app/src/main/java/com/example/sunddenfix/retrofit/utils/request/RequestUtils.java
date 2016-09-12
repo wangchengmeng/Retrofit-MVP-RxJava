@@ -14,14 +14,13 @@ import rx.Observable;
  * @author wangchengmeng
  */
 public class RequestUtils {
-    //如果不是https访问 直接使用这个
-    private static OkHttpClient okHttpClient = new OkHttpClient();
+    private static OkHttpClient okHttpClient = new HttpClient().getOkHttpClient();
 
     private static final String URL_2 = "http://ip.taobao.com/service/";
 
     //初始化Retrofit
     public static final Retrofit mRetrofit = new Retrofit.Builder()
-            .client(HttpClient.getUnsafeOkHttpClient())
+            .client(okHttpClient)
             .baseUrl(URL_2)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())

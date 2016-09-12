@@ -27,7 +27,6 @@ public class MainPresenter extends BasePrensenter<MainView> {
      * message：返回信息
      */
     public void getCountry(String ip) {
-
         RxSubscriber subscriber = new RxSubscriber<CountryModel>() {
             @Override
             public void _onSuccess(CountryModel model) {

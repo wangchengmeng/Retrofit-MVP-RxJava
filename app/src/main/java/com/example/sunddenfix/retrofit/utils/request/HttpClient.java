@@ -17,10 +17,15 @@ import okhttp3.Response;
  */
 public class HttpClient {
 
+    public OkHttpClient getOkHttpClient() {
+        return getUnsafeOkHttpClient() != null ? getUnsafeOkHttpClient() : new OkHttpClient();
+    }
+
+
     /**
      * 信任https证书设置
      */
-    public static OkHttpClient getUnsafeOkHttpClient() {
+    private OkHttpClient getUnsafeOkHttpClient() {
 
         //实现一个 通用 header的拦截器  如果不需要就不添加
         Interceptor interceptor = new Interceptor() {
