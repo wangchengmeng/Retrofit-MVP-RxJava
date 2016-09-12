@@ -11,12 +11,12 @@ import android.support.v7.app.AppCompatActivity;
  */
 public abstract class BaseActivity<T extends IPrensenter> extends AppCompatActivity {
 
-    protected T mIPrensenter;
+    protected T mIPresenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mIPrensenter = getPresenter();
+        mIPresenter = getPresenter();
     }
 
     protected abstract T getPresenter();
@@ -24,7 +24,8 @@ public abstract class BaseActivity<T extends IPrensenter> extends AppCompatActiv
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //释放订阅
-        mIPrensenter.detatchView();
+        //取消订阅
+        mIPresenter.detatchView();
+        mIPresenter = null;
     }
 }

@@ -21,7 +21,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     }
 
     private void getMainData() {
-        mIPrensenter.getCountry("21.22.11.33");
+        mIPresenter.getCountry("21.22.11.33");
     }
 
     @Override

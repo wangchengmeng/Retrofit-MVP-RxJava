@@ -20,12 +20,13 @@ public class BasePrensenter<T extends IView> implements IPrensenter {
         this.mIView = view;
     }
 
+    //取消所有的订阅
     protected void unSubscribe() {
         if (mCompositeSubscription != null) {
             mCompositeSubscription.unsubscribe();
         }
     }
-
+    //将创建的subscriber添加到这个集合中，方便在Activity销毁的时候取消订阅
     protected void addSubscrebe(Subscription subscription) {
         if (mCompositeSubscription == null) {
             mCompositeSubscription = new CompositeSubscription();
