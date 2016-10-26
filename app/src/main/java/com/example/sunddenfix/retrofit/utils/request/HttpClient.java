@@ -1,6 +1,7 @@
 package com.example.sunddenfix.retrofit.utils.request;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -15,9 +16,9 @@ import okhttp3.Response;
 /**
  * @author wangchengmeng
  */
-public class HttpClient {
+class HttpClient {
 
-    public OkHttpClient getOkHttpClient() {
+    OkHttpClient getOkHttpClient() {
         return getUnsafeOkHttpClient() != null ? getUnsafeOkHttpClient() : new OkHttpClient();
     }
 
@@ -77,6 +78,8 @@ public class HttpClient {
             okHttpClient = okHttpClient.newBuilder()
                     //.addInterceptor(interceptor)  //添加拦截器  eg：添加通用header  日志log等
                     .sslSocketFactory(sslSocketFactory)
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(20, TimeUnit.SECONDS)
                     .hostnameVerifier(org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER).build();
 
             return okHttpClient;

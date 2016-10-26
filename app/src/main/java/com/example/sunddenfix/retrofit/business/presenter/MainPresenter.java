@@ -1,12 +1,12 @@
-package com.example.sunddenfix.retrofit.presenter;
+package com.example.sunddenfix.retrofit.business.presenter;
 
 import android.app.Activity;
 import android.util.Log;
 
 import com.example.sunddenfix.retrofit.base.BasePrensenter;
+import com.example.sunddenfix.retrofit.business.manager.ApiManager;
 import com.example.sunddenfix.retrofit.model.ActionResult;
 import com.example.sunddenfix.retrofit.model.CountryModel;
-import com.example.sunddenfix.retrofit.utils.request.RequestUtils;
 import com.example.sunddenfix.retrofit.utils.rx.RxSubscriber;
 import com.example.sunddenfix.retrofit.utils.rx.RxUtil;
 import com.example.sunddenfix.retrofit.viewIm.MainView;
@@ -40,7 +40,7 @@ public class MainPresenter extends BasePrensenter<MainView> {
             }
         };
 
-        RequestUtils.getCountry(ip)
+        ApiManager.getCountry(ip)
                 .compose(RxUtil.<ActionResult<CountryModel>>ioMain())
                 .subscribe(subscriber);
         addSubscrebe(subscriber);

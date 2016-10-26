@@ -7,8 +7,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sunddenfix.retrofit.base.BaseActivity;
+import com.example.sunddenfix.retrofit.business.presenter.MainPresenter;
 import com.example.sunddenfix.retrofit.model.CountryModel;
-import com.example.sunddenfix.retrofit.presenter.MainPresenter;
 import com.example.sunddenfix.retrofit.utils.rx.RxUtil;
 import com.example.sunddenfix.retrofit.viewIm.MainView;
 import com.jakewharton.rxbinding.view.RxView;
@@ -120,6 +120,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
                     }
                 });
     }
+
+
+
 
     private void getMainData() {
         mIPresenter.getCountry("21.22.11.33");
