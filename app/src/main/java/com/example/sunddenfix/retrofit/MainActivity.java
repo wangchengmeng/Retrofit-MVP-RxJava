@@ -104,7 +104,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
             @Override
             public void call(final Subscriber<? super String> subscriber) {
                 Schedulers.newThread().createWorker()
-                        .schedulePeriodically(new Action0() {
+                        .schedulePeriodically(new Action0 () {
                             @Override
                             public void call() {
                                 subscriber.onNext("轮询请求==========");

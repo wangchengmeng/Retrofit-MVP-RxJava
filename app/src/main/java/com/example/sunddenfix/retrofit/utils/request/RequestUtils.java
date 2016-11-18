@@ -19,7 +19,7 @@ public class RequestUtils {
     private static Retrofit mRetrofit = null;
 
 
-    //获取Retrofit对象 预防对线程
+    //获取Retrofit对象 预防多线程
     public static Retrofit getInstance() {
         if (null == mRetrofit) {
             synchronized (mLock) {

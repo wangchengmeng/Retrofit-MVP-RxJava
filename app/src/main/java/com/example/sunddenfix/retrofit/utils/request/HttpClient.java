@@ -1,5 +1,8 @@
 package com.example.sunddenfix.retrofit.utils.request;
 
+import com.example.sunddenfix.retrofit.App;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -8,6 +11,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.Cache;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -74,12 +78,17 @@ class HttpClient {
             final SSLSocketFactory sslSocketFactory = sslContext
                     .getSocketFactory();
 
+            //设置 请求的缓存
+            File cacheFile = new File(App.getInstance().getCacheDir(), "cache");
+            Cache cache = new Cache(cacheFile, 1024 * 1024 * 50); //50Mb
+
             OkHttpClient okHttpClient = new OkHttpClient();
             okHttpClient = okHttpClient.newBuilder()
                     //.addInterceptor(interceptor)  //添加拦截器  eg：添加通用header  日志log等
                     .sslSocketFactory(sslSocketFactory)
                     .connectTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(20, TimeUnit.SECONDS)
+                    .cache(cache) //网络请求缓存
                     .hostnameVerifier(org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER).build();
 
             return okHttpClient;

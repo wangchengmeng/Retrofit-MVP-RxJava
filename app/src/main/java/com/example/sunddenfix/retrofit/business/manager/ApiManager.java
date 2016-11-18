@@ -17,7 +17,6 @@ public class ApiManager {
     //service
     private static IApiService manager = RequestUtils.getInstance().create(IApiService.class);
 
-
     public static Observable<ActionResult<CountryModel>> getCountry(String ip) {
         return manager.getCountry(ip);
     }
