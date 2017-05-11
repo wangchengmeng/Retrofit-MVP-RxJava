@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "com.example.sunddenfix.retrofit"
@@ -33,4 +33,5 @@ dependencies {
 
     compile 'com.trello:rxlifecycle:0.5.0'
     compile 'com.trello:rxlifecycle-components:0.5.0'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
 }
