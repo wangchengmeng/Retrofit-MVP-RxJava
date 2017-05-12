@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.example.sunddenfix.retrofit.App;
 import com.example.sunddenfix.retrofit.R;
-import com.example.sunddenfix.retrofit.business.manager.HtcHostnameVerifier;
+import com.example.sunddenfix.retrofit.business.HtcHostnameVerifier;
 import com.example.sunddenfix.retrofit.utils.IOUtil;
 import com.example.sunddenfix.retrofit.utils.StringUtil;
 

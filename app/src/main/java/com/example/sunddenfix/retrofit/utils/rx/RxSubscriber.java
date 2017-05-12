@@ -28,7 +28,7 @@ public class RxSubscriber<T> extends Subscriber<ActionResult<T>> {
 
     @Override
     public void onNext(ActionResult<T> tActionResult) {
-        //在这里可以根据返回的不同code 做不同的事情
+        //在这里可以根据返回的不同code 做不同的事情 类似403这类型的错误code便可以统一处理
         Log.d(TAG, tActionResult.toString());
         switch (tActionResult.getCode()) {
             case ActionResult.RESULT_CODE_NO_LOGIN:
