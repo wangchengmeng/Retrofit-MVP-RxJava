@@ -1,4 +1,4 @@
-package com.example.sunddenfix.retrofit.api;
+package com.example.sunddenfix.retrofit.business.api;
 
 import com.example.sunddenfix.retrofit.model.ActionResult;
 import com.example.sunddenfix.retrofit.model.CountryModel;
@@ -10,7 +10,7 @@ import rx.Observable;
 /**
  * @author wangchengmeng
  */
-public interface IApiService {
+public interface IMainService {
 
     //URL后面参数  用Query，如果需要动态设置路径用Path(这里只是模拟动态路径传递)
     //    @GET("movie/{top250}")

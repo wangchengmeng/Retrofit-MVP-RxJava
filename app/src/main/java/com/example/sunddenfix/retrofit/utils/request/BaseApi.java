@@ -2,6 +2,10 @@ package com.example.sunddenfix.retrofit.utils.request;
 
 import android.util.Log;
 
+import com.example.sunddenfix.retrofit.App;
+import com.example.sunddenfix.retrofit.R;
+import com.example.sunddenfix.retrofit.business.manager.HtcHostnameVerifier;
+import com.example.sunddenfix.retrofit.utils.IOUtil;
 import com.example.sunddenfix.retrofit.utils.StringUtil;
 
 import java.io.IOException;
@@ -21,6 +25,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -28,18 +33,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * @author wangchengmeng
  */
-public class RequestUtils {
+public class BaseApi {
 
    private static final String TAG = "okHttpClient";
 
-   private static OkHttpClient okHttpClient = new HttpClient().getOkHttpClient();
-
    private static final String URL_2 = "http://ip.taobao.com/service/";
-
-   private final static Object mLock = new Object();
-
-   //初始化Retrofit
-   private static Retrofit mRetrofit = null;
 
    private static final int DEFAULT_TIMEOUT = 10;
    private static Retrofit mRetrofit;
@@ -59,11 +57,11 @@ public class RequestUtils {
 
          if (!StringUtil.isNullOrEmpty(url) && url.toLowerCase().contains("https:")) {
             try {
-               builder.sslSocketFactory(getSSLSocketFactory(new int[]{R.raw.tunhuoji}));
-               builder.hostnameVerifier(new HtcHostnameVerifier(new String[]{BASE_URL_HOST}));
+               builder.sslSocketFactory(getSSLSocketFactory(new int[]{R.raw.tunhuoji}));//证书
+               builder.hostnameVerifier(new HtcHostnameVerifier(new String[]{getApiHost()}));
             } catch (Exception e) {
                e.printStackTrace();
-               EvtLog.e(TAG, e.getMessage());
+               Log.e(TAG, e.getMessage());
             }
          }
 
@@ -71,8 +69,8 @@ public class RequestUtils {
 
          mRetrofit = new Retrofit.Builder()
                              .client(client)
-                             .addConverterFactory(GsonConverterFactory.create())
-                             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                             .addConverterFactory(GsonConverterFactory.create())//添加gson
+                             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())//添加rx
                              .baseUrl(url)
                              .build();
       }
@@ -85,7 +83,7 @@ public class RequestUtils {
       keyStore.load(null, null);
 
       for (int i = 0; i < certificates.length; i++) {
-         InputStream certificate = HtcApplication.getInstance().getResources().openRawResource(certificates[i]);
+         InputStream certificate = App.getInstance().getResources().openRawResource(certificates[i]);
          keyStore.setCertificateEntry(String.valueOf(i), certificateFactory.generateCertificate(certificate));
          IOUtil.closeStream(certificate);
       }
@@ -113,6 +111,9 @@ public class RequestUtils {
       }
    };
 
+   /**
+    * 网络请求打印日志
+    */
    private static HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
       @Override
       public void log(String message) {
@@ -126,7 +127,7 @@ public class RequestUtils {
     *
     * @return
     */
-   public static String getApiHost() {
+   private static String getApiHost() {
       URL url;
       try {
          url = new URL(getApiUrl());
@@ -142,7 +143,7 @@ public class RequestUtils {
     *
     * @return String API的基本地址
     */
-   public static String getApiUrl() {
+   private static String getApiUrl() {
       return URL_2;
    }
 }

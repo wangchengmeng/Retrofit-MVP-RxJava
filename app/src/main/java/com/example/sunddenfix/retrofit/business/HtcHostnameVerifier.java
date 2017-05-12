@@ -1,4 +1,4 @@
-package com.example.sunddenfix.retrofit.business.manager;
+package com.example.sunddenfix.retrofit.business;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
