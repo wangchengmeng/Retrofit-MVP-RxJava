@@ -2,21 +2,17 @@ package com.example.sunddenfix.retrofit;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.sunddenfix.retrofit.base.BaseActivity;
-import com.example.sunddenfix.retrofit.presenter.MainPresenter;
 import com.example.sunddenfix.retrofit.model.CountryModel;
+import com.example.sunddenfix.retrofit.presenter.MainPresenter;
 import com.example.sunddenfix.retrofit.utils.rx.RxUtil;
 import com.example.sunddenfix.retrofit.viewIm.MainView;
-import com.jakewharton.rxbinding.view.RxView;
 
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
-import rx.Observer;
 import rx.Subscriber;
 import rx.functions.Action0;
 import rx.functions.Action1;
@@ -24,10 +20,10 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity<MainPresenter> implements MainView {
 
-   private TextView mTextView;
-   private Button mBtnClick;
-   private TextView mTvResult;
    private int looper = 0;
+
+   private TextView mTvResult;
+   private TextView mTvFlowableResult;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +34,14 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
    }
 
    private void initViews() {
-      mTextView = (TextView) findViewById(R.id.tv_name);
       mTvResult = (TextView) findViewById(R.id.tv_result);
-      mBtnClick = (Button) findViewById(R.id.btn_click);
+
+      mTvFlowableResult = (TextView) findViewById(R.id.tv_flowable_result);
    }
 
    private void getMainData() {
-//      mIPresenter.getCountry("21.22.11.33");
+      mIPresenter.getCountry("21.22.11.33");
+
       mIPresenter.getCountry2("21.22.11.33");
    }
 
@@ -55,8 +52,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
 
    @Override
    public void updateText(CountryModel model) {
-      mTextView.setText(model.getCountry() + ":" + model.getIp());
+      mTvResult.setText(model.getCountry() + ":" + model.getIp());
+      mTvFlowableResult.setText(model.getCountry() + ":" + model.getIp());
    }
+
+
 
 
 
@@ -104,25 +104,25 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
 
    private void testLimitClick() {
       //限制频繁点击  限制5秒
-      RxView.clicks(mBtnClick)
-              .throttleFirst(5, TimeUnit.SECONDS)
-              .subscribe(new Observer<Object>() {
-                 @Override
-                 public void onCompleted() {
-                    Log.d("aaa", "onCompleted:");
-                 }
-
-                 @Override
-                 public void onError(Throwable e) {
-                    Log.d("aaa", "onError:");
-                 }
-
-                 @Override
-                 public void onNext(Object o) {
-                    Log.d("aaa", "onNext:");
-                    Toast.makeText(MainActivity.this, "点击了", Toast.LENGTH_SHORT).show();
-                 }
-              });
+      //      RxView.clicks(mBtnClick)
+      //              .throttleFirst(5, TimeUnit.SECONDS)
+      //              .subscribe(new Observer<Object>() {
+      //                 @Override
+      //                 public void onCompleted() {
+      //                    Log.d("aaa", "onCompleted:");
+      //                 }
+      //
+      //                 @Override
+      //                 public void onError(Throwable e) {
+      //                    Log.d("aaa", "onError:");
+      //                 }
+      //
+      //                 @Override
+      //                 public void onNext(Object o) {
+      //                    Log.d("aaa", "onNext:");
+      //                    Toast.makeText(MainActivity.this, "点击了", Toast.LENGTH_SHORT).show();
+      //                 }
+      //              });
    }
 
    private void testPeriodically() {
