@@ -7,6 +7,7 @@ import com.example.sunddenfix.retrofit.R;
 import com.example.sunddenfix.retrofit.business.HtcHostnameVerifier;
 import com.example.sunddenfix.retrofit.utils.IOUtil;
 import com.example.sunddenfix.retrofit.utils.StringUtil;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +28,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -70,7 +70,7 @@ public class BaseApi {
          mRetrofit = new Retrofit.Builder()
                              .client(client)
                              .addConverterFactory(GsonConverterFactory.create())//添加gson
-                             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())//添加rx
+                             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())//添加rx
                              .baseUrl(url)
                              .build();
       }

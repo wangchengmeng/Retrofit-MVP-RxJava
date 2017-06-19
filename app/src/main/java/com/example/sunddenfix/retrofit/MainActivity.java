@@ -41,11 +41,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
       mTextView = (TextView) findViewById(R.id.tv_name);
       mTvResult = (TextView) findViewById(R.id.tv_result);
       mBtnClick = (Button) findViewById(R.id.btn_click);
-      //testLimitClick();
-      //testLoopOperate();
-      //testPeriodically();
-      //partArray();
-
    }
 
    private void getMainData() {
@@ -61,6 +56,18 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
    public void updateText(CountryModel model) {
       mTextView.setText(model.getCountry() + ":" + model.getIp());
    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
    /**

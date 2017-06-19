@@ -4,10 +4,11 @@ import com.example.sunddenfix.retrofit.business.api.IMainService;
 import com.example.sunddenfix.retrofit.model.ActionResult;
 import com.example.sunddenfix.retrofit.model.CountryModel;
 import com.example.sunddenfix.retrofit.utils.request.BaseApi;
-import com.example.sunddenfix.retrofit.utils.rx.RxUtil;
+import com.example.sunddenfix.retrofit.utils.rx.SchedulersHelper;
 
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import retrofit2.Retrofit;
-import rx.Subscriber;
 
 /**
  * @author wangchengmeng
@@ -35,12 +36,13 @@ public class MainReq {
    }
 
    /**
-    * @param subscriber 处理结果的 订阅者
-    * @param ip         请求参数
+    * @param consumer 处理结果的 订阅者
+    * @param ip       请求参数
+    *                 return 返回Disposable 方便在销毁的时候取消订阅
     */
-   public  void getCountry(Subscriber<ActionResult<CountryModel>> subscriber, String ip) {
-      mMainService.getCountry(ip)
-              .compose(RxUtil.<ActionResult<CountryModel>>ioMain()) //这里封装的切换线程 只需调用一下即可达到异步
-              .subscribe(subscriber); //订阅
+   public Disposable getCountry(Consumer<ActionResult<CountryModel>> consumer, String ip) {
+      return mMainService.getCountry(ip)
+                     .compose(SchedulersHelper.<ActionResult<CountryModel>>io2MainFlowable())
+                     .subscribe(consumer);
    }
 }

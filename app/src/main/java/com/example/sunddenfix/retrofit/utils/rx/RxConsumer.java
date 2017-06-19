@@ -5,39 +5,21 @@ import android.util.Log;
 import com.example.sunddenfix.retrofit.model.ActionResult;
 import com.example.sunddenfix.retrofit.utils.StringUtil;
 
-import org.reactivestreams.Subscription;
-
-import io.reactivex.FlowableSubscriber;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
 
 /**
- * @author wangchengmeng
- * @desc Subscriber的重新封装
- * @更新时间 2016-9-9
+ * Created by wangchengm
+ * on 2017/6/19.
+ * 对consumer对封装
  */
-public class RxSubscriber<T> implements FlowableSubscriber<ActionResult<T>> {
-   private static final String TAG = "RxSubscriber";
+
+public class RxConsumer<T> implements Consumer<ActionResult<T>> {
+
+   private static final String TAG = "RxConsumer";
 
    @Override
-   public void onError(Throwable e) {
-      //该方法在出错的时候一定会调用
-      Log.d(TAG, e.toString());
-      _onError("网络链接出错");
-   }
-
-   @Override
-   public void onComplete() {
-      //订阅处理完成 自定义处理
-   }
-
-
-   @Override
-   public void onSubscribe(@NonNull Subscription s) {
-      s.request(Long.MAX_VALUE);//不限制请求数量 设置为 max
-   }
-
-   @Override
-   public void onNext(ActionResult<T> tActionResult) {
+   public void accept(@NonNull ActionResult<T> tActionResult) throws Exception {
       //在这里可以根据返回的不同code 做不同的事情 类似403这类型的错误code便可以统一处理
       Log.d(TAG, tActionResult.toString());
       switch (tActionResult.getCode()) {

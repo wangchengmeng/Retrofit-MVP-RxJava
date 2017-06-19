@@ -9,20 +9,20 @@ import rx.schedulers.Schedulers;
  */
 public class RxUtil {
 
-    /**
-     * 统一线程切换方法
-     *
-     * @param <T> Observable
-     * @return Transformer对象
-     */
-    public static <T> Observable.Transformer<T, T> ioMain() {
-        return new Observable.Transformer<T, T>() {
-            @Override
-            public Observable<T> call(Observable<T> tObservable) {
-                return tObservable.subscribeOn(Schedulers.io())
-                        .unsubscribeOn(AndroidSchedulers.mainThread())
-                        .observeOn(AndroidSchedulers.mainThread());
-            }
-        };
-    }
+   /**
+    * 统一线程切换方法
+    *
+    * @param <T> Observable
+    * @return Transformer对象
+    */
+   public static <T> Observable.Transformer<T, T> ioMain() {
+      return new Observable.Transformer<T, T>() {
+         @Override
+         public Observable<T> call(Observable<T> tObservable) {
+            return tObservable.subscribeOn(Schedulers.io())
+                           .unsubscribeOn(AndroidSchedulers.mainThread())
+                           .observeOn(AndroidSchedulers.mainThread());
+         }
+      };
+   }
 }
