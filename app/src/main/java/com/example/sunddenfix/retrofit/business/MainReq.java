@@ -45,4 +45,15 @@ public class MainReq {
                      .compose(SchedulersHelper.<ActionResult<CountryModel>>io2MainFlowable())
                      .subscribe(consumer);
    }
+
+   /**
+    * @param consumer 处理结果的 订阅者
+    * @param ip       请求参数
+    *                 return 返回Disposable 方便在销毁的时候取消订阅
+    */
+   public Disposable getCountry2(Consumer<ActionResult<CountryModel>> consumer, String ip) {
+      return mMainService.getCountry2(ip)
+                     .compose(SchedulersHelper.<ActionResult<CountryModel>>io2MainObservable())
+                     .subscribe(consumer);
+   }
 }
