@@ -7,8 +7,17 @@ import com.example.sunddenfix.retrofit.base.BaseActivity;
 import com.example.sunddenfix.retrofit.presenter.MainPresenter;
 import com.example.sunddenfix.retrofit.utils.rx.RxUtil;
 
+import org.reactivestreams.Subscription;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
+import io.reactivex.functions.Consumer;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -125,7 +134,7 @@ public class ObservableCreateActivity extends BaseActivity {
         // 参数1 : 事件序列起始点；
         // 参数2 : 事件数量；
         // 若设置为负数，则会抛出异常  从2开始发送，每次发送事件递增1，一共发送8个事件
-        Observable.range(2,8)
+        Observable.range(2, 8)
                 .subscribe(new Action1<Integer>() {
                     @Override
                     public void call(Integer integer) {
@@ -133,10 +142,63 @@ public class ObservableCreateActivity extends BaseActivity {
                     }
                 });
 
-        //以上是 Rx1.0的版本, Rx2.0增加了被压策略，更改了部分api
+        //TODO 以上是 Rx1.0的版本的用法, 下面介绍一下 Rx2.0的用法。主要增加了背压策略，更改了部分api
 
+        Flowable.create(new FlowableOnSubscribe<String>() {
+            @Override
+            public void subscribe(FlowableEmitter<String> e) throws Exception {
 
+            }
+        }, BackpressureStrategy.ERROR)//增加了 这个参数
+                // 这种方式会在产生Backpressure问题的时候直接抛出一个异常,这个异常就是著名的MissingBackpressureException。
+                .subscribe(new org.reactivestreams.Subscriber<String>() {
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        //申请处理事件的个数
+                        s.request(Integer.MAX_VALUE);
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        //和以往的一样 处理事件
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        //处理错误
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        //事件处理完毕后调用
+                    }
+                });
+
+        //在Rx2.0之后没有之前的Action了，换成了Consumer
+
+        //fromIterable 发送一个实现了Iterable的集合
+        List<String> item = new ArrayList<>();
+        item.add("Rx-1");
+        Flowable.fromIterable(item)
+                .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(String s) throws Exception {
+                        //接受事件
+                    }
+                });
+
+        //以上就是创建Observable的一些方法，大家可以自行测试一下
     }
+
+
+
+
+
+
+
+
+
+
 
 
     @Override

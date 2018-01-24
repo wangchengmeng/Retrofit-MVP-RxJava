@@ -1,162 +1,122 @@
 # Retrofit-MVP-RxJava
 Retrofit+MVP+RxJava三者结合的框架搭建
 
+       //一个常规的使用
+      Consumer<ActionResult<CountryModel>> consumer = new RxConsumer<CountryModel>() {
+         @Override
+         public void _onSuccess(CountryModel countryModel) {
+            mIView.updateText(countryModel);
+         }
+
+         @Override
+         public void _onError(String error) {
+            Log.d("aaa", "_onError" + error);
+         }
+      };
+
+      Disposable disposable = MainReq.getInstance().getCountry(consumer, ip);
+      addSubscrebe(disposable);//添加订阅者，内部实现在页面关闭的时候取消订阅防止内存泄漏
+
+       //介绍RxConsumer 该类继承Consumer，并实现了accept方法
+
+       所有返回的请求都会在这个方法这里处理，
+       重点在_onSuccess()这个方法，留个开发者自行处理返回成功的情况，_onError处理错误的情况，至于其他情况
+       比如token失效，单点登陆等，这些都可以在这里对所有的接口做统一处理
 
 
-
-
-/**
- * @author wangchengm
- * @desc 介绍最基础的rx使用方法，从rx1.0使用过度到rx2.0的使用，
- * 适合刚入门的rx学者
- * <p>
- * 主要是由Observable（被观察者）发射出事件，然后subscribe（订阅）Observer（观察者）然后Observer会
- * 接收到事件，并进行处理的一个过程。
- * <p>
- * 为什么是被观察者订阅观察者呢？
- * 方便这种链式调用
- */
-
-
-
-  //创建被观察者 Observable的几种方式
-
-        //1. create
-        Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                //发射事件
-                subscriber.onNext("Rxjava-1");
-                subscriber.onNext("Rxjava-2");
-                subscriber.onCompleted();
+    @Override
+     public void accept(@NonNull ActionResult<T> tActionResult) throws Exception {
+      //在这里可以根据返回的不同code 做不同的事情 类似403这类型的错误code便可以统一处理
+      Log.d(TAG, tActionResult.toString());
+      switch (tActionResult.getCode()) {
+         case ActionResult.RESULT_CODE_NO_LOGIN:
+            //返回403 token失效
+            break;
+         case ActionResult.RESULT_CODE_NO_FOUND:
+            //返回404  页面未找到
+            break;
+         case ActionResult.RESULT_CODE_SUCCESS:
+            //返回200 请求成功
+            _onSuccess(tActionResult.getData());
+            break;
+         default:
+            if (!StringUtil.isNullOrEmpty(tActionResult.getMessage())) {
+               //如果有返回的message
+               _onError(tActionResult.getMessage());
+            } else {
+               _onError("网络链接出错");
             }
-        }).subscribe(new Observer<String>() {
-            @Override
-            public void onCompleted() {
-                //事件接受完成后 调用该方法
-            }
+        }
+     }
 
-            @Override
-            public void onError(Throwable e) {
-                //出错的时候调用该方法
 
-                //注意 onCompleted 和 onError只要调用其中一个就结束
-            }
 
-            @Override
-            public void onNext(String s) {
-                //接受发射的 onNext方法
-            }
-        });
+     public Disposable getCountry(Consumer<ActionResult<CountryModel>> consumer, String ip) {
+        return mMainService.getCountry(ip)
+                     .compose(SchedulersHelper.<ActionResult<CountryModel>>io2MainFlowable())
+                     .subscribe(consumer);
+    }
 
-        //2.just 注意：最多只可以发送10个事件
-        Observable.just(1, 2, 3, 4, 5).subscribe(new Action1<Integer>() {
-            @Override
-            public void call(Integer integer) {
-                //当需求只在乎 onNext方法的时候 只需要使用Action
-            }
-        });
+    订阅完成后会返回Disposable 方便对于已经处理完成的Observable进行取消，
 
-        //3.from 接受一个list 或者 array
-        String[] args = {"rx-1", "rx-2", "rx-3"};
-        Observable.from(args)
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
+    在BasePresenter中
+    //取消所有的订阅
+    protected void unSubscribe() {
+      if (mCompositeDisposable != null) {
+         mCompositeDisposable.dispose();
+      }
+    }
 
-                    }
-                });
+    //将创建的subscriber添加到这个集合中，方便在Activity销毁的时候取消订阅
+    protected void addSubscrebe(Disposable disposable) {
+      if (mCompositeDisposable == null) {
+         mCompositeDisposable = new CompositeDisposable();
+      }
+        mCompositeDisposable.add(disposable);
+     }
 
-        //4.该方法创建的被观察者对象发送事件的特点：仅发送Complete事件，直接通知完成
-        Observable.empty();
+    //该方法直接在onDestroy的时候调用 避免内存泄漏
+    @Override
+    public void detatchView() {
+      this.mIView = null;
+      unSubscribe();
+     }
 
-        //5.该方法创建的被观察者对象发送事件的特点：仅发送Error事件，直接通知异常
-        Observable.error(new RuntimeException());
 
-        //6.never() 该方法创建的被观察者对象发送事件的特点：不发送任何事件 似乎没啥作用
-        Observable.never();
+    //线程切换的helpter
 
-        //7.defer() 延迟创建Observable 在订阅的时候才会创建
-//        Observable.defer(new Func0<Observable<? extends Object>>() {
-//            @Override
-//            public Observable<? extends Object> call() {
-//                return null;
-//            }
-//        });
 
-        //8.timer() 延迟3s，发送一个long类型数值
+   //使用2.0ObservableTransformer 实现  当被观察者 是Observable的时候使用
+    public static <T> ObservableTransformer<T, T> io2MainObservable() {
+      return new ObservableTransformer<T, T>() {
+         @Override
+         public ObservableSource<T> apply(Observable<T> upstream) {
+            return upstream.subscribeOn(Schedulers.io())
+                           .unsubscribeOn(AndroidSchedulers.mainThread())
+                           .observeOn(AndroidSchedulers.mainThread());
+         }
+      };
+   }
 
-        Observable.timer(3, TimeUnit.SECONDS)
-                .subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(Long aLong) {
+    //当被观察者 是FLowable的时候使用
+     public static <T> FlowableTransformer<T, T> io2MainFlowable() {
+      return new FlowableTransformer<T, T>() {
+         @Override
+         public Publisher<T> apply(Flowable<T> upstream) {
+            return upstream.subscribeOn(Schedulers.io())
+                           .unsubscribeOn(AndroidSchedulers.mainThread())
+                           .observeOn(AndroidSchedulers.mainThread());
+         }
+      };
+    }
 
-                    }
-                });
 
-        //9.interval() 延迟2s发送第一个事件后，每隔1s发送一个事件
-        Observable.interval(2, 1, TimeUnit.SECONDS)
-                .subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(Long aLong) {
 
-                    }
-                });
-        //10.range()
-        // 参数1 : 事件序列起始点；
-        // 参数2 : 事件数量；
-        // 若设置为负数，则会抛出异常  从2开始发送，每次发送事件递增1，一共发送8个事件
-        Observable.range(2, 8)
-                .subscribe(new Action1<Integer>() {
-                    @Override
-                    public void call(Integer integer) {
-                        //integer 2，3，4，5，6，7，8，9
-                    }
-                });
 
-        //TODO 以上是 Rx1.0的版本的用法, 下面介绍一下 Rx2.0的用法。主要增加了背压策略，更改了部分api
 
-        Flowable.create(new FlowableOnSubscribe<String>() {
-            @Override
-            public void subscribe(FlowableEmitter<String> e) throws Exception {
 
-            }
-        }, BackpressureStrategy.ERROR)//增加了 这个参数
-                // 这种方式会在产生Backpressure问题的时候直接抛出一个异常,这个异常就是著名的MissingBackpressureException。
-                .subscribe(new org.reactivestreams.Subscriber<String>() {
-                    @Override
-                    public void onSubscribe(Subscription s) {
-                        //申请处理事件的个数
-                        s.request(Integer.MAX_VALUE);
-                    }
 
-                    @Override
-                    public void onNext(String s) {
-                        //和以往的一样 处理事件
-                    }
 
-                    @Override
-                    public void onError(Throwable t) {
-                        //处理错误
-                    }
 
-                    @Override
-                    public void onComplete() {
-                        //事件处理完毕后调用
-                    }
-                });
 
-        //在Rx2.0之后没有之前的Action了，换成了Consumer
 
-        //fromIterable 发送一个实现了Iterable的集合
-        List<String> item = new ArrayList<>();
-        item.add("Rx-1");
-        Flowable.fromIterable(item)
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String s) throws Exception {
-                        //接受事件
-                    }
-                });
-
-        //以上就是创建Observable的一些方法，大家可以自行测试一下
