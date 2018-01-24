@@ -86,17 +86,17 @@ Retrofit+MVP+RxJava三者结合的框架搭建
     //线程切换的helpter
 
 
-   //使用2.0ObservableTransformer 实现  当被观察者 是Observable的时候使用
-    public static <T> ObservableTransformer<T, T> io2MainObservable() {
-      return new ObservableTransformer<T, T>() {
-         @Override
-         public ObservableSource<T> apply(Observable<T> upstream) {
-            return upstream.subscribeOn(Schedulers.io())
+    //使用2.0ObservableTransformer 实现  当被观察者 是Observable的时候使用
+        public static <T> ObservableTransformer<T, T> io2MainObservable() {
+            return new ObservableTransformer<T, T>() {
+            @Override
+            public ObservableSource<T> apply(Observable<T> upstream) {
+                return upstream.subscribeOn(Schedulers.io())
                            .unsubscribeOn(AndroidSchedulers.mainThread())
                            .observeOn(AndroidSchedulers.mainThread());
-         }
-      };
-   }
+            }
+        };
+    }
 
     //当被观察者 是FLowable的时候使用
      public static <T> FlowableTransformer<T, T> io2MainFlowable() {
