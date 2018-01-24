@@ -12,6 +12,7 @@ import io.reactivex.functions.Consumer;
  * Created by wangchengm
  * on 2017/6/19.
  * 对consumer对封装
+ * 对于 Subscriber 只需要onNext方法的时候 就可以使用Consumer
  */
 
 public class RxConsumer<T> implements Consumer<ActionResult<T>> {
