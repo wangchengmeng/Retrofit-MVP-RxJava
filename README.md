@@ -112,6 +112,64 @@ Retrofit+MVP+RxJava三者结合的框架搭建
 
 
 
+###实现文件上传时候的进度
+
+ 主要是重写RequestBody，定义个回调，可以接收到上传的字节数 和文件的总字节数
+
+    定义个类CountRequestBody 继承自 RequestBody
+
+    定义个成员
+
+        private RequestBody mDelegate;//代理  内部主要还是依靠这个代理对象处理
+
+    实现方法：
+
+    @Override
+    public MediaType contentType() {
+        return mDelegate.contentType();
+    }
+
+    @Override
+    public long contentLength() {
+        try {
+            return mDelegate.contentLength();
+        } catch (IOException e) {
+            return -1;
+        }
+    }
+
+
+    @Override
+    public void writeTo(BufferedSink sink) {
+        try {
+            //CountSink 自定义的一个类 继承自 ForwardingSink
+            CountSink countSink = new CountSink(sink);
+            BufferedSink bufferedSink = Okio.buffer(countSink);
+            mDelegate.writeTo(bufferedSink);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private class CountSink extends ForwardingSink {
+
+        private long bytesWrite;//记录已经上传的字节数
+
+        public CountSink(Sink delegate) {
+            super(delegate);
+        }
+
+        @Override
+        public void write(Buffer source, long byteCount) throws IOException {
+            super.write(source, byteCount);
+            bytesWrite += byteCount;
+            mListener.onProgress(bytesWrite, contentLength());
+        }
+    }
+
+
+源码在utils包下的CountRequestBody
 
 
 
