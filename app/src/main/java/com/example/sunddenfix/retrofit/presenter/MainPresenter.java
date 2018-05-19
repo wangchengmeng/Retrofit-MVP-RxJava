@@ -44,6 +44,7 @@ public class MainPresenter extends BasePrensenter<MainView> {
 
       Disposable disposable = MainReq.getInstance().getCountry(consumer, ip);
       addSubscrebe(disposable);//添加订阅者，内部实现在页面关闭的时候取消订阅防止内存泄漏
+
    }
 
    /**

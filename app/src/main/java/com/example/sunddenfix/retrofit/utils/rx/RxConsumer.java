@@ -26,6 +26,7 @@ public class RxConsumer<T> implements Consumer<ActionResult<T>> {
       switch (tActionResult.getCode()) {
          case ActionResult.RESULT_CODE_NO_LOGIN:
             //返回403 token失效
+
             break;
          case ActionResult.RESULT_CODE_NO_FOUND:
             //返回404  页面未找到

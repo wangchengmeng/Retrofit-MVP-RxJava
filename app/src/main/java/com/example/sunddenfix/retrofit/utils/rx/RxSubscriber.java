@@ -13,7 +13,7 @@ import io.reactivex.annotations.NonNull;
 /**
  * @author wangchengmeng
  * @desc Subscriber的重新封装
- * @更新时间 2016-9-9
+ * @更新时间 2015-9-9
  */
 public class RxSubscriber<T> implements FlowableSubscriber<ActionResult<T>> {
    private static final String TAG = "RxSubscriber";

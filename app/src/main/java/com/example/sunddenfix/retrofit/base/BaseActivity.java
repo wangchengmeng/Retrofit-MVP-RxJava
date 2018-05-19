@@ -16,10 +16,15 @@ public abstract class BaseActivity<T extends IPrensenter> extends AppCompatActiv
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (0 != getResourceId()) {
+            setContentView(getResourceId());
+        }
         mIPresenter = getPresenter();
     }
 
     protected abstract T getPresenter();
+
+    protected abstract int getResourceId();
 
     @Override
     protected void onDestroy() {

@@ -17,6 +17,7 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
 import io.reactivex.FlowableOnSubscribe;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import rx.Observable;
 import rx.Observer;
@@ -41,7 +42,6 @@ public class ObservableCreateActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         initViews();
     }
 
@@ -58,32 +58,34 @@ public class ObservableCreateActivity extends BaseActivity {
                 subscriber.onNext("Rxjava-2");
                 subscriber.onCompleted();
             }
-        }).subscribe(new Observer<String>() {
-            @Override
-            public void onCompleted() {
-                //事件接受完成后 调用该方法
-            }
+        })
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onCompleted() {
+                        //事件接受完成后 调用该方法
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-                //出错的时候调用该方法
+                    @Override
+                    public void onError(Throwable e) {
+                        //出错的时候调用该方法
 
-                //注意 onCompleted 和 onError只要调用其中一个就结束
-            }
+                        //注意 onCompleted 和 onError只要调用其中一个就结束
+                    }
 
-            @Override
-            public void onNext(String s) {
-                //接受发射的 onNext方法
-            }
-        });
+                    @Override
+                    public void onNext(String s) {
+                        //接受发射的 onNext方法
+                    }
+                });
 
         //2.just 注意：最多只可以发送10个事件
-        Observable.just(1, 2, 3, 4, 5).subscribe(new Action1<Integer>() {
-            @Override
-            public void call(Integer integer) {
-                //当需求只在乎 onNext方法的时候 只需要使用Action
-            }
-        });
+        Observable.just(1, 2, 3, 4, 5)
+                .subscribe(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer integer) {
+                        //当需求只在乎 onNext方法的时候 只需要使用Action
+                    }
+                });
 
         //3.from 接受一个list 或者 array
         String[] args = {"rx-1", "rx-2", "rx-3"};
@@ -105,12 +107,12 @@ public class ObservableCreateActivity extends BaseActivity {
         Observable.never();
 
         //7.defer() 延迟创建Observable 在订阅的时候才会创建
-//        Observable.defer(new Func0<Observable<? extends Object>>() {
-//            @Override
-//            public Observable<? extends Object> call() {
-//                return null;
-//            }
-//        });
+        //        Observable.defer(new Func0<Observable<? extends Object>>() {
+        //            @Override
+        //            public Observable<? extends Object> call() {
+        //                return null;
+        //            }
+        //        });
 
         //8.timer() 延迟3s，发送一个long类型数值
 
@@ -179,11 +181,12 @@ public class ObservableCreateActivity extends BaseActivity {
         //fromIterable 发送一个实现了Iterable的集合
         List<String> item = new ArrayList<>();
         item.add("Rx-1");
-        Flowable.fromIterable(item)
+        Disposable subscribe = Flowable.fromIterable(item)
                 .subscribe(new Consumer<String>() {
                     @Override
                     public void accept(String s) throws Exception {
                         //接受事件
+
                     }
                 });
 
@@ -191,21 +194,15 @@ public class ObservableCreateActivity extends BaseActivity {
     }
 
 
-
-
-
-
-
-
-
-
-
-
     @Override
     protected MainPresenter getPresenter() {
         return null;
     }
 
+    @Override
+    protected int getResourceId() {
+        return R.layout.activity_main;
+    }
 
     /**
      * 下面是关于rx的一些操作符的使用
@@ -222,7 +219,8 @@ public class ObservableCreateActivity extends BaseActivity {
                         builder.append(s + ":");
 
                     }
-                }).unsubscribe();
+                })
+                .unsubscribe();
     }
 
     private void testLoopOperate() {
@@ -265,7 +263,8 @@ public class ObservableCreateActivity extends BaseActivity {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(final Subscriber<? super String> subscriber) {
-                Schedulers.newThread().createWorker()
+                Schedulers.newThread()
+                        .createWorker()
                         .schedulePeriodically(new Action0() {
                             @Override
                             public void call() {
@@ -273,7 +272,8 @@ public class ObservableCreateActivity extends BaseActivity {
                             }
                         }, 1, 4, TimeUnit.SECONDS); //1 首次延迟时间   4 每间隔时间
             }
-        }).compose(RxUtil.<String>ioMain())
+        })
+                .compose(RxUtil.<String>ioMain())
                 .subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {
