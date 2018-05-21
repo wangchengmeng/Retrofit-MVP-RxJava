@@ -1,6 +1,6 @@
 # Retrofit-MVP-RxJava
 
-####添加了 分之 branch_kotlin ,将整套代码 用kotlin编写更加简洁，
+# 添加了 分支 branch_kotlin ,将整套代码 用kotlin编写更加简洁，
 
 
 Retrofit+MVP+RxJava三者结合的框架搭建
