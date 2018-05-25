@@ -22,7 +22,7 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManagerFactory
 
-class BaseApi {
+class BaseApi private constructor() {
     companion object {
         private const val TAG: String = "okHttpClient"
         private const val URL_2: String = "http://ip.taobao.com/service/"
@@ -39,7 +39,7 @@ class BaseApi {
                         .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                         .writeTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
 
-                if (url.isNullOrEmpty() && url.toLowerCase().contains("https")) {
+                if (url.toLowerCase().contains("https")) {
                     try {
                         builder.sslSocketFactory(getSSLSocketFactory(intArrayOf(R.raw.tunhuoji)))//证书
                         builder.hostnameVerifier(HtcHostnameVerifier(arrayOf(getApiHost())))
