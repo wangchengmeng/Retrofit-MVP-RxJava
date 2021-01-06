@@ -1,4 +1,4 @@
-package com.example.sunddenfix.retrofit.model;
+package com.example.sunddenfix.retrofit.bean;
 
 /**
  * @author wangchengmeng

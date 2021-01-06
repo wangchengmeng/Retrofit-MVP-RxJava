@@ -3,6 +3,6 @@ package com.example.sunddenfix.retrofit.base;
 /**
  * @author wangchengmeng
  */
-public interface IPrensenter {
-    void detatchView();
+public interface IPresenter {
+    void detachView();
 }

@@ -1,15 +1,16 @@
 package com.example.sunddenfix.retrofit.base;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * @author wangchengmeng
  * @desc
  * @更新时间
  */
-public abstract class BaseActivity<T extends IPrensenter> extends AppCompatActivity {
+public abstract class BaseActivity<T extends IPresenter> extends AppCompatActivity {
 
     protected T mIPresenter;
 
@@ -19,6 +20,7 @@ public abstract class BaseActivity<T extends IPrensenter> extends AppCompatActiv
         if (0 != getResourceId()) {
             setContentView(getResourceId());
         }
+
         mIPresenter = getPresenter();
     }
 
@@ -30,7 +32,7 @@ public abstract class BaseActivity<T extends IPrensenter> extends AppCompatActiv
     protected void onDestroy() {
         super.onDestroy();
         //取消订阅
-        mIPresenter.detatchView();
+        mIPresenter.detachView();
         mIPresenter = null;
     }
 }

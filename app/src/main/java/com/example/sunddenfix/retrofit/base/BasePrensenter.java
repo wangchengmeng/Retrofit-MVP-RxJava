@@ -8,7 +8,7 @@ import io.reactivex.disposables.Disposable;
 /**
  * @author wangchengmeng
  */
-public class BasePrensenter<T extends IView> implements IPrensenter {
+public class BasePrensenter<T extends IView> implements IPresenter {
 
    protected T mIView;
    protected Activity mActivity;
@@ -29,7 +29,7 @@ public class BasePrensenter<T extends IView> implements IPrensenter {
    }
 
    //将创建的subscriber添加到这个集合中，方便在Activity销毁的时候取消订阅
-   protected void addSubscrebe(Disposable disposable) {
+   protected void addSubscribe(Disposable disposable) {
       if (mCompositeDisposable == null) {
          mCompositeDisposable = new CompositeDisposable();
       }
@@ -37,7 +37,7 @@ public class BasePrensenter<T extends IView> implements IPrensenter {
    }
 
    @Override
-   public void detatchView() {
+   public void detachView() {
       this.mIView = null;
       unSubscribe();
    }

@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Retrofit-MVP-RxJava.iml" filepath="$PROJECT_DIR$/Retrofit-MVP-RxJava.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Retrofit-MVP-RxJava-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Retrofit-MVP-RxJava-app.iml" group="Retrofit-MVP-RxJava/app" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/project-Retrofit-MVP-RxJava.iml" filepath="$PROJECT_DIR$/.idea/modules/project-Retrofit-MVP-RxJava.iml" group="Retrofit-MVP-RxJava" />
     </modules>
   </component>
 </project>
